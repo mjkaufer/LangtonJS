@@ -9,23 +9,25 @@ var EAST = 0,
 	NORTH = 90,
 	WEST = 180,
 	SOUTH = 270
-var n = 4
-var ants = []
+var n = 8
+
 var grid = makeGrid(n)
 var clearCol = "\x1b[0m"
 var color = "\x1b[36m"
+var generation = 0;
 //grid[y][x]
-var ant = makeAnt(0, 1, EAST)
+var ants = []
+ants.push(makeAnt(parseInt(n/4), parseInt(n/4), EAST))
+ants.push(makeAnt(n - parseInt(n/4), n - parseInt(n/4), NORTH))
 clearScreen()
 // printGrid(ant, grid)
-
 setInterval(function(){
 	clearScreen()
-	move(ant, grid)
+	move(ants, grid)
 	// console.log(ant)
 	// console.log(orientationToCoords(ant.orientation))
 	console.log(clearCol)
-}, 50)
+}, 200)
 
 function clearScreen(){
 	process.stdout.write("\u001b[2J\u001b[0;0H");
@@ -86,29 +88,47 @@ function makeAnt(startX, startY, orientation){//orientation of 0 is east, 90 is 
 }
 
 
-function move(ant, grid){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
+function move(ants, grid){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
 	//also, write code for when ants meet
-	var start = {
-		x: ant.x,
-		y: ant.y
-	}
+	var toggleArray = []
 
-	var isFilled = (grid[start.y][start.x] == 1)
+	for(var i = 0; i < ants.length; i++){
+		var ant = ants[i]
 
-	ant.turn(isFilled)
+		var start = {
+			x: ant.x,
+			y: ant.y
+		}
 
-	var next = nextPosition(ant, grid)
-
-	while(!next){
+		var isFilled = (grid[start.y][start.x] == 1)
 
 		ant.turn(isFilled)
-		next = nextPosition(ant, grid)
+
+		var next = nextPosition(ant, grid)
+
+		while(!next){
+
+			ant.turn(isFilled)
+			next = nextPosition(ant, grid)
+		}
+
+		ant.updatePosition(next)
+
+		toggleArray.push({
+			x: start.x,
+			y: start.y
+		})
 	}
 
-	ant.updatePosition(next)
-	grid[start.y][start.x] = (grid[start.y][start.x] + 1) % 2
+	for(var i = 0; i < toggleArray.length; i++){
 
-	printGrid(ant, grid)
+		var pos = toggleArray[i]
+
+		grid[pos.y][pos.x] = (grid[pos.y][pos.x] + 1) % 2	
+	}
+	
+	printGrid(ants, grid)
+	console.log(generation++)
 
 }
 
@@ -127,12 +147,22 @@ function makeGrid(n){
 
 }
 
-function printGrid(ant, grid){
+function antInPosition(ants, x, y){
+	for(var i = 0; i < ants.length; i++){
+		var ant = ants[i]
+		if(ant.x == x && ant.y == y)
+			return true
+	}
+
+	return false
+}
+
+function printGrid(ants, grid){
 	for(var y = 0; y < grid.length; y++){
 		var printString = ""
 		for(var x = 0; x < grid[y].length; x++){
-			if(ant.x == x && ant.y == y)
-				printString += ant.toString()
+			if(antInPosition(ants, x, y))
+				printString += color
 			printString += grid[y][x]
 			printString += clearCol
 		}
