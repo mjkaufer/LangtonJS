@@ -3,6 +3,7 @@ Rules
 At an empty square, turn 90° left, toggle color, move forwards
 At a full square, turn 90° right, toggle color, move forwards
 When moving forwards, do so if possible, else keep rotating in the same direction
+If two ants land on the same place, the non-first one to reach the spot turns according to the above pattern
 */
 
 var EAST = 0,
@@ -19,6 +20,7 @@ var generation = 0;
 var ants = []
 ants.push(makeAnt(parseInt(n/4), parseInt(n/4), EAST))
 ants.push(makeAnt(n - parseInt(n/4), n - parseInt(n/4), NORTH))
+ants.push(makeAnt(n - parseInt(n/4), parseInt(n/4), WEST))
 clearScreen()
 // printGrid(ant, grid)
 setInterval(function(){
@@ -27,7 +29,7 @@ setInterval(function(){
 	// console.log(ant)
 	// console.log(orientationToCoords(ant.orientation))
 	console.log(clearCol)
-}, 200)
+})
 
 function clearScreen(){
 	process.stdout.write("\u001b[2J\u001b[0;0H");
@@ -87,7 +89,6 @@ function makeAnt(startX, startY, orientation){//orientation of 0 is east, 90 is 
 	}
 }
 
-
 function move(ants, grid){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
 	//also, write code for when ants meet
 	var toggleArray = []
@@ -114,10 +115,16 @@ function move(ants, grid){//todo, make efficient datastructure for iterating ove
 
 		ant.updatePosition(next)
 
-		toggleArray.push({
-			x: start.x,
-			y: start.y
-		})
+		if(positionInPositionArray(toggleArray, start.x, start.y)){
+			ant.turn(isFilled)
+		} else {
+			toggleArray.push({
+				x: start.x,
+				y: start.y,
+				ant: ant
+			})
+		}
+
 	}
 
 	for(var i = 0; i < toggleArray.length; i++){
@@ -147,10 +154,10 @@ function makeGrid(n){
 
 }
 
-function antInPosition(ants, x, y){
-	for(var i = 0; i < ants.length; i++){
-		var ant = ants[i]
-		if(ant.x == x && ant.y == y)
+function positionInPositionArray(positionArray, x, y){
+	for(var i = 0; i < positionArray.length; i++){
+		var position = positionArray[i]
+		if(position.x == x && position.y == y)
 			return true
 	}
 
@@ -161,7 +168,7 @@ function printGrid(ants, grid){
 	for(var y = 0; y < grid.length; y++){
 		var printString = ""
 		for(var x = 0; x < grid[y].length; x++){
-			if(antInPosition(ants, x, y))
+			if(positionInPositionArray(ants, x, y))
 				printString += color
 			printString += grid[y][x]
 			printString += clearCol
