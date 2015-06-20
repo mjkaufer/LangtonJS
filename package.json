@@ -1,0 +1,19 @@
+{
+  "name": "LangtonJS",
+  "version": "0.0.1",
+  "description": "Text-based Langton's Ant simulator, supporting multiple ants.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mjkaufer/LangtonJS"
+  },
+  "author": "Matthew Kaufer (@mjkaufer)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mjkaufer/LangtonJS/issues"
+  },
+  "homepage": "https://github.com/mjkaufer/LangtonJS"
+}
