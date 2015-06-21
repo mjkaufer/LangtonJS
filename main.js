@@ -10,7 +10,7 @@ var EAST = 0,
 	NORTH = 90,
 	WEST = 180,
 	SOUTH = 270
-var n = 8
+var n = 16
 
 var grid = makeGrid(n)
 var clearCol = "\x1b[0m"
@@ -22,13 +22,8 @@ ants.push(makeAnt(parseInt(n/4), parseInt(n/4), EAST))
 ants.push(makeAnt(n - parseInt(n/4), n - parseInt(n/4), NORTH))
 ants.push(makeAnt(n - parseInt(n/4), parseInt(n/4), WEST))
 clearScreen()
-// printGrid(ant, grid)
 setInterval(function(){
-	clearScreen()
-	move(ants, grid)
-	// console.log(ant)
-	// console.log(orientationToCoords(ant.orientation))
-	console.log(clearCol)
+	move(ants, grid, true)
 })
 
 function clearScreen(){
@@ -44,8 +39,11 @@ function orientationToCoords(orientation){
 
 function nextPosition(ant, grid){//returns either an Object with x & y, or false if the next position is not valid
 	var delta = orientationToCoords(ant.orientation)
-	var nx = delta.x + ant.x
-	var ny = delta.y + ant.y
+	// var nx = delta.x + ant.x
+	// var ny = delta.y + ant.y
+	var ny = (delta.y + ant.y + grid.length) % grid.length
+	var nx = (delta.x + ant.x + grid[ny].length) % grid[ny].length
+	
 	if(0 <= ny && ny < grid.length && 0 <= nx && nx < grid[ny].length)
 		return {
 			x: nx,
@@ -89,7 +87,7 @@ function makeAnt(startX, startY, orientation){//orientation of 0 is east, 90 is 
 	}
 }
 
-function move(ants, grid){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
+function move(ants, grid, printBoard){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
 	//also, write code for when ants meet
 	var toggleArray = []
 
@@ -133,9 +131,20 @@ function move(ants, grid){//todo, make efficient datastructure for iterating ove
 
 		grid[pos.y][pos.x] = (grid[pos.y][pos.x] + 1) % 2	
 	}
-	
-	printGrid(ants, grid)
-	console.log(generation++)
+	generation++
+
+	if(printBoard){
+		clearScreen()
+		printGrid(ants, grid)
+		console.log(clearCol)
+		console.log(generation)
+	} else {
+		if(generation % 1000 == 0){
+			console.log(generation)
+		}
+	}
+
+
 
 }
 
