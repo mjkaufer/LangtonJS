@@ -17,17 +17,58 @@ var grid = makeGrid(n)
 var clearCol = "\x1b[0m"
 var color = "\x1b[36m"
 var generation = 0;
-//grid[y][x]
 var ants = []
+
+var possibilities = []
+
+for(var i = 0; i < Math.pow(2, bits); i++)
+	possibilities.push(i)
+
 ants.push(makeAnt(parseInt(n/4), parseInt(n/4), EAST))
 ants.push(makeAnt(n - parseInt(n/4), n - parseInt(n/4), NORTH))
 ants.push(makeAnt(n - parseInt(n/4), parseInt(n/4), WEST))
+//todo - algorithm to dynamically add ants based on grid size - maybe based on ulam spiral?
 clearScreen()
-setInterval(function(){
-	move(ants, grid, true)
-})
+var bool = true
 
-function remove(arr, num){
+var startTime = getMicroseconds()
+var endTime = 0
+while(bool){
+	// clearScreen()
+	move(ants, grid, false)
+	// console.log("Starting  possibilities: " + Math.pow(2, bits))
+	// console.log("Remaining possibilities: " + possibilities.length)
+	// console.log(possibilities.length)
+	var val = gridToInt(grid)
+	// console.log(val)
+	removeFromArr(possibilities, val)
+
+	if(possibilities.length == 0){
+
+		bool = false
+		endTime = getMicroseconds()
+		stats()
+		
+	}
+}
+
+function getMicroseconds(){
+	var hrTime = process.hrtime()
+	return hrTime[0] * 1000000 + hrTime[1] / 1000
+}
+
+function stats(){
+		console.log("For n = " + n + ", permutated through all " + Math.pow(2, bits) + " possibilities! Took " + generation + " generations!")
+
+		var dimensionBits = n.toString(2).length;
+		var generationBits = parseInt(Math.log(generation)).toString(2).length
+
+		console.log("Potential bits left for hash: " + (bits - (generationBits + dimensionBits)))
+		var elapsedMicroseconds = (endTime - startTime)
+		console.log("Took " + elapsedMicroseconds + " microseconds (" + (elapsedMicroseconds * 1e-6) + " seconds)")
+}
+
+function removeFromArr(arr, num){
 	var num = arr.indexOf(num);
 	if(num > -1)
 		arr.splice(arr.indexOf(num), 1)
@@ -143,12 +184,7 @@ function move(ants, grid, printBoard){//todo, make efficient datastructure for i
 	if(printBoard){
 		clearScreen()
 		printGrid(ants, grid)
-		console.log(clearCol)
-		console.log(generation)
-	} else {
-		if(generation % 1000 == 0){
-			console.log(generation)
-		}
+		console.log(clearCol + "Generation: " + generation)
 	}
 
 
@@ -168,6 +204,14 @@ function makeGrid(n){
 		grid.push(zeroArray(n-1))//n-1 so that we have coprime dimensions
 	return grid
 
+}
+
+function gridToInt(grid){
+	var gridString = ""
+	for(var y = 0; y < grid.length; y++)
+		for(var x = 0; x < grid[0].length; x++)
+			gridString += grid[y][x]
+	return parseInt(gridString, 2)
 }
 
 function positionInPositionArray(positionArray, x, y){
