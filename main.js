@@ -10,7 +10,7 @@ var EAST = 0,
 	NORTH = 90,
 	WEST = 180,
 	SOUTH = 270
-var n = 4
+var n = 5
 var bits = n * (n - 1)
 
 var grid = makeGrid(n)
@@ -33,11 +33,16 @@ var bool = true
 
 var startTime = getMicroseconds()
 var endTime = 0
+var output = false
 while(bool){
 	// clearScreen()
-	move(ants, grid, false)
-	// console.log("Starting  possibilities: " + Math.pow(2, bits))
-	// console.log("Remaining possibilities: " + possibilities.length)
+	move(ants, grid, output)
+	if(output || generation % 1000 == 0){
+		console.log("Starting  possibilities: " + Math.pow(2, bits))
+		console.log("Remaining possibilities: " + possibilities.length)
+		console.log("Generation: " + generation)
+	}
+
 	// console.log(possibilities.length)
 	var val = gridToInt(grid)
 	// console.log(val)
@@ -184,7 +189,7 @@ function move(ants, grid, printBoard){//todo, make efficient datastructure for i
 	if(printBoard){
 		clearScreen()
 		printGrid(ants, grid)
-		console.log(clearCol + "Generation: " + generation)
+		console.log(clearCol)
 	}
 
 

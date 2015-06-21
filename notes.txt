@@ -1,0 +1,3 @@
+Works lickety-split at n=4
+Testing n=5 right now, taking a long time
+Make output=false to speed up calculations, output=true to print board, etc
