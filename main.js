@@ -10,7 +10,8 @@ var EAST = 0,
 	NORTH = 90,
 	WEST = 180,
 	SOUTH = 270
-var n = 16
+var n = 4
+var bits = n * (n - 1)
 
 var grid = makeGrid(n)
 var clearCol = "\x1b[0m"
@@ -25,6 +26,12 @@ clearScreen()
 setInterval(function(){
 	move(ants, grid, true)
 })
+
+function remove(arr, num){
+	var num = arr.indexOf(num);
+	if(num > -1)
+		arr.splice(arr.indexOf(num), 1)
+}
 
 function clearScreen(){
 	process.stdout.write("\u001b[2J\u001b[0;0H");
@@ -176,7 +183,7 @@ function positionInPositionArray(positionArray, x, y){
 function printGrid(ants, grid){
 	for(var y = 0; y < grid.length; y++){
 		var printString = ""
-		for(var x = 0; x < grid[y].length; x++){
+		for(var x = 0; x < grid[0].length; x++){
 			if(positionInPositionArray(ants, x, y))
 				printString += color
 			printString += grid[y][x]
