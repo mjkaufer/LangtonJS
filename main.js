@@ -35,7 +35,6 @@ var startTime = getMicroseconds()
 var endTime = 0
 var output = false
 while(bool){
-	// clearScreen()
 	move(ants, grid, output)
 	if(output || generation % 1000 == 0){
 		console.log("Starting  possibilities: " + Math.pow(2, bits))
@@ -43,9 +42,7 @@ while(bool){
 		console.log("Generation: " + generation)
 	}
 
-	// console.log(possibilities.length)
 	var val = gridToInt(grid)
-	// console.log(val)
 	removeFromArr(possibilities, val)
 
 	if(possibilities.length == 0){
@@ -140,8 +137,7 @@ function makeAnt(startX, startY, orientation){//orientation of 0 is east, 90 is 
 	}
 }
 
-function move(ants, grid, printBoard){//todo, make efficient datastructure for iterating over all ants - idea: two arrays, x and y, compare indices of them
-	//also, write code for when ants meet
+function move(ants, grid, printBoard){
 	var toggleArray = []
 
 	for(var i = 0; i < ants.length; i++){

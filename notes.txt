@@ -6,5 +6,7 @@ Testing n=5 right now
 
 Todo:
 
-Make ant positioning dynamic based on size of n
-	Use Ulam spiral
+	Make ant positioning dynamic based on size of n
+		Use Ulam spiral
+
+	Better interactions when ants meet?
